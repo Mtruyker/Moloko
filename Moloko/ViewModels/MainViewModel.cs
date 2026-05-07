@@ -10,7 +10,8 @@ namespace Moloko.ViewModels;
 
 public sealed class MainViewModel : ObservableObject
 {
-    private readonly IAppDataStore _store = AppDataStoreFactory.Create();
+    private readonly IAppDataStore _store;
+    private readonly UserAccount _currentUser;
     private AppData _data;
     private Batch? _selectedBatch;
     private StorageTank? _selectedTank;
@@ -33,8 +34,10 @@ public sealed class MainViewModel : ObservableObject
     private decimal _operationVolume = 50;
     private decimal _shipmentTemperature = 6;
 
-    public MainViewModel()
+    public MainViewModel(IAppDataStore store, UserAccount currentUser)
     {
+        _store = store;
+        _currentUser = currentUser;
         _data = _store.Load();
 
         Users = new ObservableCollection<UserAccount>(_data.Users);
@@ -72,7 +75,7 @@ public sealed class MainViewModel : ObservableObject
 
         GenerateReport();
         RefreshDashboard();
-        StatusMessage = $"Хранилище данных: {_store.ProviderName}";
+        StatusMessage = $"Пользователь: {_currentUser.FullName} ({RussianText.Role(_currentUser.Role)}). Хранилище данных: {_store.ProviderName}";
     }
 
     public ObservableCollection<UserAccount> Users { get; }
@@ -279,7 +282,7 @@ public sealed class MainViewModel : ObservableObject
             StorageTankId = SelectedTank.Id,
             ProductTypeId = SelectedProductType.Id,
             ExpirationDate = DateTime.Now.AddHours(SelectedProductType.ShelfLifeHours),
-            CreatedBy = "Оператор учета"
+            CreatedBy = _currentUser.FullName
         };
 
         var milkYield = new MilkYield
@@ -288,7 +291,7 @@ public sealed class MainViewModel : ObservableObject
             AnimalGroupId = SelectedAnimalGroup.Id,
             Farm = "КФХ Жукушева К.Н.",
             Room = SelectedAnimalGroup.Location,
-            OperatorName = "Оператор учета",
+            OperatorName = _currentUser.FullName,
             VolumeLiters = YieldVolume,
             WeightKg = YieldWeight,
             Temperature = YieldTemperature,
@@ -329,7 +332,7 @@ public sealed class MainViewModel : ObservableObject
             HasForeignImpurities = HasForeignImpurities,
             ExpressTests = HasForeignImpurities ? "обнаружены отклонения" : "экспресс-тесты без отклонений",
             Conclusion = conclusion,
-            TestedBy = "Лаборант",
+            TestedBy = _currentUser.FullName,
             Comment = BuildQualityComment(conclusion)
         };
 
@@ -420,7 +423,7 @@ public sealed class MainViewModel : ObservableObject
             VehicleId = SelectedVehicle.Id,
             Temperature = ShipmentTemperature,
             BasisDocument = $"Накладная {DateTime.Now:dd.MM.yyyy}",
-            ResponsibleUser = "Оператор учета"
+            ResponsibleUser = _currentUser.FullName
         };
         var item = new ShipmentItem
         {
@@ -604,7 +607,7 @@ public sealed class MainViewModel : ObservableObject
             VolumeLiters = volume,
             FromTankId = fromTank,
             ToTankId = toTank,
-            ResponsibleUser = "Оператор учета",
+            ResponsibleUser = _currentUser.FullName,
             Reason = reason
         });
     }
@@ -613,7 +616,7 @@ public sealed class MainViewModel : ObservableObject
     {
         AuditLog.Insert(0, new AuditEntry
         {
-            UserName = "local-user",
+            UserName = _currentUser.Login,
             Action = action,
             Details = details
         });

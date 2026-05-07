@@ -152,11 +152,12 @@ public sealed class PostgreSqlAppDataStore : IAppDataStore
         foreach (var user in data.Users)
         {
             Execute(connection, transaction, """
-                insert into users (id, login, full_name, role, role_id, is_active)
-                values (@id, @login, @full_name, @role, @role_id, @is_active)
+                insert into users (id, login, password_hash, full_name, role, role_id, is_active)
+                values (@id, @login, @password_hash, @full_name, @role, @role_id, @is_active)
                 """,
                 ("id", user.Id),
                 ("login", user.Login),
+                ("password_hash", user.PasswordHash),
                 ("full_name", user.FullName),
                 ("role", user.Role.ToString()),
                 ("role_id", RoleId(user.Role.ToString())),
@@ -377,16 +378,17 @@ public sealed class PostgreSqlAppDataStore : IAppDataStore
     private static List<UserAccount> LoadUsers(NpgsqlConnection connection)
     {
         var result = new List<UserAccount>();
-        using var reader = Read(connection, "select id, login, full_name, role, is_active from users order by full_name");
+        using var reader = Read(connection, "select id, login, coalesce(password_hash, ''), full_name, role, is_active from users order by full_name");
         while (reader.Read())
         {
             result.Add(new UserAccount
             {
                 Id = reader.GetGuid(0),
                 Login = reader.GetString(1),
-                FullName = reader.GetString(2),
-                Role = ParseEnum(reader.GetString(3), UserRole.Operator),
-                IsActive = reader.GetBoolean(4)
+                PasswordHash = reader.GetString(2),
+                FullName = reader.GetString(3),
+                Role = ParseEnum(reader.GetString(4), UserRole.Operator),
+                IsActive = reader.GetBoolean(5)
             });
         }
 

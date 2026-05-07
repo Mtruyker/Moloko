@@ -54,3 +54,6 @@ G:\RiderProjects\Moloko\Moloko\bin\Debug\net8.0-windows\Microsoft.Extensions.Log
 G:\RiderProjects\Moloko\Moloko\bin\Debug\net8.0-windows\Npgsql.dll
 G:\RiderProjects\Moloko\Moloko\obj\Debug\net8.0-windows\Moloko.csproj.AssemblyReference.cache
 G:\RiderProjects\Moloko\Moloko\obj\Debug\net8.0-windows\Moloko.csproj.Up2Date
+G:\RiderProjects\Moloko\Moloko\obj\Debug\net8.0-windows\LoginWindow.baml
+G:\RiderProjects\Moloko\Moloko\obj\Debug\net8.0-windows\LoginWindow.g.cs
+G:\RiderProjects\Moloko\Moloko\obj\Debug\net8.0-windows\Moloko.sourcelink.json

@@ -70,15 +70,62 @@ function Image-Xml([string]$RelationshipId, [int64]$Cx, [int64]$Cy, [string]$Alt
 "@
 }
 
+function Table-Xml([System.Collections.Generic.List[string]]$Lines) {
+    $rows = New-Object System.Collections.Generic.List[string]
+    foreach ($line in $Lines) {
+        $trimmed = $line.Trim()
+        if ($trimmed -match '^\|[\s:\-]+\|') {
+            continue
+        }
+
+        $cells = $trimmed.Trim('|').Split('|') | ForEach-Object { $_.Trim() }
+        $cellXml = New-Object System.Collections.Generic.List[string]
+        foreach ($cell in $cells) {
+            [void]$cellXml.Add('<w:tc><w:tcPr><w:tcW w:w="2400" w:type="dxa"/></w:tcPr>' + (Paragraph-Xml -Text $cell -Style 'TableText') + '</w:tc>')
+        }
+        [void]$rows.Add('<w:tr>' + ($cellXml -join '') + '</w:tr>')
+    }
+
+    if ($rows.Count -eq 0) {
+        return ''
+    }
+
+    return @"
+<w:tbl>
+  <w:tblPr>
+    <w:tblW w:w="0" w:type="auto"/>
+    <w:tblBorders>
+      <w:top w:val="single" w:sz="4" w:space="0" w:color="808080"/>
+      <w:left w:val="single" w:sz="4" w:space="0" w:color="808080"/>
+      <w:bottom w:val="single" w:sz="4" w:space="0" w:color="808080"/>
+      <w:right w:val="single" w:sz="4" w:space="0" w:color="808080"/>
+      <w:insideH w:val="single" w:sz="4" w:space="0" w:color="808080"/>
+      <w:insideV w:val="single" w:sz="4" w:space="0" w:color="808080"/>
+    </w:tblBorders>
+  </w:tblPr>
+  $($rows -join "`n")
+</w:tbl>
+"@
+}
+
 $lines = Get-Content -LiteralPath $InputPath -Encoding UTF8
 $body = New-Object System.Collections.Generic.List[string]
 $imageRels = New-Object System.Collections.Generic.List[string]
 $imageFiles = New-Object System.Collections.Generic.List[object]
 $inputDirectory = Split-Path -Parent ([System.IO.Path]::GetFullPath($InputPath))
 $inCode = $false
+$tableLines = New-Object System.Collections.Generic.List[string]
+
+function Flush-Table {
+    if ($script:tableLines.Count -gt 0) {
+        [void]$script:body.Add((Table-Xml -Lines $script:tableLines))
+        $script:tableLines.Clear()
+    }
+}
 
 foreach ($line in $lines) {
     if ($line.Trim() -eq "\page") {
+        Flush-Table
         $body.Add((PageBreak-Xml))
         continue
     }
@@ -89,15 +136,24 @@ foreach ($line in $lines) {
     }
 
     if ($inCode) {
+        Flush-Table
         $paragraph = Paragraph-Xml -Text $line -Style 'Code'
         [void]$body.Add($paragraph)
         continue
     }
 
     if ([string]::IsNullOrWhiteSpace($line)) {
+        Flush-Table
         [void]$body.Add('<w:p/>')
         continue
     }
+
+    if ($line.Trim().StartsWith('|')) {
+        [void]$tableLines.Add($line)
+        continue
+    }
+
+    Flush-Table
 
     if ($line -match '^!\[(.+?)\]\((.+?)\)$') {
         $alt = $matches[1]
@@ -125,7 +181,11 @@ foreach ($line in $lines) {
         }
     }
 
-    if ($line.StartsWith("## ")) {
+    if ($line.StartsWith("### ")) {
+        $paragraph = Paragraph-Xml -Text ($line.Substring(4)) -Style 'Heading3'
+        [void]$body.Add($paragraph)
+    }
+    elseif ($line.StartsWith("## ")) {
         $paragraph = Paragraph-Xml -Text ($line.Substring(3)) -Style 'Heading2'
         [void]$body.Add($paragraph)
     }
@@ -143,6 +203,8 @@ foreach ($line in $lines) {
     }
 }
 
+Flush-Table
+
 $documentXml = @"
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -153,6 +215,8 @@ $documentXml = @"
   <w:body>
     $($body -join "`n")
     <w:sectPr>
+      <w:footerReference w:type="default" r:id="rIdFooter1"/>
+      <w:titlePg/>
       <w:pgSz w:w="11906" w:h="16838"/>
       <w:pgMar w:top="1134" w:right="567" w:bottom="1134" w:left="1701" w:header="708" w:footer="708" w:gutter="0"/>
       <w:cols w:space="708"/>
@@ -226,6 +290,37 @@ $stylesXml = @"
       <w:sz w:val="20"/>
     </w:rPr>
   </w:style>
+  <w:style w:type="paragraph" w:styleId="Heading3">
+    <w:name w:val="heading 3"/>
+    <w:basedOn w:val="Normal"/>
+    <w:next w:val="Normal"/>
+    <w:qFormat/>
+    <w:pPr>
+      <w:keepNext/>
+      <w:spacing w:before="160" w:after="100"/>
+      <w:ind w:firstLine="708"/>
+    </w:pPr>
+    <w:rPr>
+      <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+      <w:i/>
+      <w:sz w:val="28"/>
+      <w:szCs w:val="28"/>
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="TableText">
+    <w:name w:val="Table Text"/>
+    <w:basedOn w:val="Normal"/>
+    <w:pPr>
+      <w:spacing w:line="240" w:lineRule="auto"/>
+      <w:ind w:firstLine="0"/>
+      <w:jc w:val="left"/>
+    </w:pPr>
+    <w:rPr>
+      <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+      <w:sz w:val="24"/>
+      <w:szCs w:val="24"/>
+    </w:rPr>
+  </w:style>
 </w:styles>
 "@
 
@@ -237,6 +332,7 @@ $contentTypesXml = @"
   <Default Extension="png" ContentType="image/png"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
   <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>
 </Types>
 "@
 
@@ -250,8 +346,27 @@ $relsXml = @"
 $documentRelsXml = @"
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rIdFooter1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>
   $($imageRels -join "`n")
 </Relationships>
+"@
+
+$footerXml = @"
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:p>
+    <w:pPr><w:jc w:val="center"/></w:pPr>
+    <w:r>
+      <w:fldChar w:fldCharType="begin"/>
+    </w:r>
+    <w:r>
+      <w:instrText xml:space="preserve"> PAGE </w:instrText>
+    </w:r>
+    <w:r>
+      <w:fldChar w:fldCharType="end"/>
+    </w:r>
+  </w:p>
+</w:ftr>
 "@
 
 if (Test-Path -LiteralPath $OutputPath) {
@@ -282,6 +397,7 @@ Add-ZipEntry $zip "_rels/.rels" $relsXml
 Add-ZipEntry $zip "word/_rels/document.xml.rels" $documentRelsXml
 Add-ZipEntry $zip "word/document.xml" $documentXml
 Add-ZipEntry $zip "word/styles.xml" $stylesXml
+Add-ZipEntry $zip "word/footer1.xml" $footerXml
 foreach ($imageFile in $imageFiles) {
     Add-ZipBytes $zip $imageFile.Target ([System.IO.File]::ReadAllBytes($imageFile.Path))
 }

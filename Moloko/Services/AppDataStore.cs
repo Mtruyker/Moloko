@@ -73,10 +73,10 @@ public static class SeedData
         var today = DateTime.Today;
         var users = new List<UserAccount>
         {
-            new() { Login = "admin", FullName = "Жукушев Куанышкали Насимуллович", Role = UserRole.Administrator },
-            new() { Login = "director", FullName = "Жукушева Айгуль Кайратовна", Role = UserRole.Manager },
-            new() { Login = "operator", FullName = "Сагинбаев Ерлан Муратович", Role = UserRole.Operator },
-            new() { Login = "lab", FullName = "Петрова Наталья Сергеевна", Role = UserRole.LabTechnician }
+            new() { Login = "admin", PasswordHash = PasswordService.HashPassword("admin123"), FullName = "Жукушев Куанышкали Насимуллович", Role = UserRole.Administrator },
+            new() { Login = "director", PasswordHash = PasswordService.HashPassword("director123"), FullName = "Жукушева Айгуль Кайратовна", Role = UserRole.Manager },
+            new() { Login = "operator", PasswordHash = PasswordService.HashPassword("operator123"), FullName = "Сагинбаев Ерлан Муратович", Role = UserRole.Operator },
+            new() { Login = "lab", PasswordHash = PasswordService.HashPassword("lab123"), FullName = "Петрова Наталья Сергеевна", Role = UserRole.LabTechnician }
         };
 
         var animalGroups = new List<AnimalGroup>

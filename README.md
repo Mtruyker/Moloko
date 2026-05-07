@@ -42,6 +42,17 @@ Host=localhost;Port=5432;Database=moloko;Username=postgres;Password=postgres
 dotnet run --project Moloko\Moloko.csproj
 ```
 
+## Демо-пользователи
+
+При первом запуске или заполнении демо-данными создаются учетные записи:
+
+| Логин | Пароль | Роль |
+| --- | --- | --- |
+| admin | admin123 | Администратор |
+| director | director123 | Глава КФХ |
+| operator | operator123 | Оператор учета |
+| lab | lab123 | Лаборант |
+
 ## Файлы данных
 
 CSV-отчеты и резервные копии создаются здесь:

@@ -17,6 +17,9 @@ create table if not exists users (
 alter table if exists users
     add column if not exists role text not null default 'Operator';
 
+alter table if exists users
+    add column if not exists password_hash text;
+
 create table if not exists animal_groups (
     id uuid primary key,
     name text not null,
