@@ -1,0 +1,468 @@
+<Window x:Class="Moloko.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:infra="clr-namespace:Moloko.Infrastructure"
+        Title="АИС контроля качества и учета партий молочной продукции"
+        MinHeight="760"
+        MinWidth="1180"
+        Height="820"
+        Width="1280"
+        WindowStartupLocation="CenterScreen"
+        Background="#F4F6F3">
+    <Window.Resources>
+        <infra:EnumTextConverter x:Key="EnumTextConverter" />
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="Foreground" Value="#1E2B25" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="MinHeight" Value="38" />
+            <Setter Property="Padding" Value="14,7" />
+            <Setter Property="Margin" Value="0,6,8,0" />
+            <Setter Property="Background" Value="#285C4D" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="0,4,12,8" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Margin" Value="0,4,12,8" />
+            <Setter Property="Padding" Value="8,4" />
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="GridLinesVisibility" Value="Horizontal" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="RowHeight" Value="34" />
+            <Setter Property="AlternatingRowBackground" Value="#EEF3EF" />
+            <Setter Property="BorderBrush" Value="#D7DED8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Margin" Value="0,8,0,0" />
+        </Style>
+        <Style x:Key="Panel" TargetType="Border">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#D7DED8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,12,12" />
+        </Style>
+        <Style x:Key="Metric" TargetType="Border" BasedOn="{StaticResource Panel}">
+            <Setter Property="MinWidth" Value="170" />
+            <Setter Property="MinHeight" Value="94" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="#203E35" Padding="20,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="КФХ Жукушева Куанышкали Насимулловича"
+                               Foreground="White"
+                               FontSize="22"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="Контроль качества, учет партий, склад, отгрузка и подготовка данных для ФГИС Меркурий"
+                               Foreground="#DDE9E4"
+                               FontSize="13"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding StatusMessage}"
+                           Foreground="#DDE9E4"
+                           VerticalAlignment="Center"
+                           FontSize="13"
+                           TextWrapping="Wrap"
+                           MaxWidth="520" />
+            </Grid>
+        </Border>
+
+        <TabControl Margin="18" FontSize="14">
+            <TabItem Header="Главная">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,14,0,0">
+                        <WrapPanel>
+                            <Border Style="{StaticResource Metric}">
+                                <StackPanel>
+                                    <TextBlock Text="Остаток" Foreground="#60716A" />
+                                    <TextBlock Text="{Binding TotalStockLiters, StringFormat={}{0:N1} л}" FontSize="26" FontWeight="Bold" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Metric}">
+                                <StackPanel>
+                                    <TextBlock Text="Всего партий" Foreground="#60716A" />
+                                    <TextBlock Text="{Binding TotalBatches}" FontSize="26" FontWeight="Bold" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Metric}">
+                                <StackPanel>
+                                    <TextBlock Text="На анализе" Foreground="#60716A" />
+                                    <TextBlock Text="{Binding InAnalysisCount}" FontSize="26" FontWeight="Bold" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Metric}">
+                                <StackPanel>
+                                    <TextBlock Text="Заблокировано" Foreground="#60716A" />
+                                    <TextBlock Text="{Binding BlockedCount}" FontSize="26" FontWeight="Bold" Foreground="#9E2F38" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Metric}">
+                                <StackPanel>
+                                    <TextBlock Text="Просрочено" Foreground="#60716A" />
+                                    <TextBlock Text="{Binding ExpiredCount}" FontSize="26" FontWeight="Bold" Foreground="#9E662F" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Metric}">
+                                <StackPanel>
+                                    <TextBlock Text="Отгрузки сегодня" Foreground="#60716A" />
+                                    <TextBlock Text="{Binding TodayShipmentsCount}" FontSize="26" FontWeight="Bold" />
+                                </StackPanel>
+                            </Border>
+                        </WrapPanel>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="Активные партии" FontSize="18" FontWeight="SemiBold" />
+                                <DataGrid ItemsSource="{Binding Batches}" SelectedItem="{Binding SelectedBatch}" IsReadOnly="True" MaxHeight="380">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Партия" Binding="{Binding BatchNumber}" Width="130" />
+                                        <DataGridTextColumn Header="Дата" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="145" />
+                                        <DataGridTextColumn Header="Статус" Binding="{Binding Status, Converter={StaticResource EnumTextConverter}}" Width="150" />
+                                        <DataGridTextColumn Header="Объем, л" Binding="{Binding VolumeLiters}" Width="90" />
+                                        <DataGridTextColumn Header="Остаток, л" Binding="{Binding RemainingLiters}" Width="95" />
+                                        <DataGridTextColumn Header="Срок годности" Binding="{Binding ExpirationDate, StringFormat=dd.MM.yyyy HH:mm}" Width="145" />
+                                        <DataGridTextColumn Header="Источник" Binding="{Binding SourceDescription}" Width="*" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Поступление">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="360" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="Регистрация надоя" FontSize="18" FontWeight="SemiBold" />
+                                <TextBlock Text="Группа животных" Margin="0,14,0,0" />
+                                <ComboBox ItemsSource="{Binding AnimalGroups}" SelectedItem="{Binding SelectedAnimalGroup}" DisplayMemberPath="Name" />
+                                <TextBlock Text="Тип продукции" />
+                                <ComboBox ItemsSource="{Binding ProductTypes}" SelectedItem="{Binding SelectedProductType}" DisplayMemberPath="Name" />
+                                <TextBlock Text="Емкость хранения" />
+                                <ComboBox ItemsSource="{Binding StorageTanks}" SelectedItem="{Binding SelectedTank}" DisplayMemberPath="Name" />
+                                <TextBlock Text="Объем, литры" />
+                                <TextBox Text="{Binding YieldVolume, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="Масса, кг" />
+                                <TextBox Text="{Binding YieldWeight, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="Температура приемки, °C" />
+                                <TextBox Text="{Binding YieldTemperature, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Content="Создать партию" Command="{Binding CreateBatchCommand}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="Журнал поступления молока" FontSize="18" FontWeight="SemiBold" />
+                                <DataGrid ItemsSource="{Binding MilkYields}" IsReadOnly="True">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Дата дойки" Binding="{Binding MilkedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="150" />
+                                        <DataGridTextColumn Header="Ферма" Binding="{Binding Farm}" Width="160" />
+                                        <DataGridTextColumn Header="Помещение" Binding="{Binding Room}" Width="180" />
+                                        <DataGridTextColumn Header="Оператор" Binding="{Binding OperatorName}" Width="140" />
+                                        <DataGridTextColumn Header="Объем, л" Binding="{Binding VolumeLiters}" Width="90" />
+                                        <DataGridTextColumn Header="Масса, кг" Binding="{Binding WeightKg}" Width="90" />
+                                        <DataGridTextColumn Header="Температура" Binding="{Binding Temperature}" Width="100" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Партии">
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1.1*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Список партий" FontSize="18" FontWeight="SemiBold" />
+                            <DataGrid ItemsSource="{Binding Batches}" SelectedItem="{Binding SelectedBatch}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Номер" Binding="{Binding BatchNumber}" Width="130" />
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="145" />
+                                    <DataGridTextColumn Header="Статус" Binding="{Binding Status, Converter={StaticResource EnumTextConverter}}" Width="150" />
+                                    <DataGridTextColumn Header="Объем" Binding="{Binding VolumeLiters}" Width="80" />
+                                    <DataGridTextColumn Header="Остаток" Binding="{Binding RemainingLiters}" Width="80" />
+                                    <DataGridTextColumn Header="Срок годности" Binding="{Binding ExpirationDate, StringFormat=dd.MM.yyyy HH:mm}" Width="145" />
+                                    <DataGridTextColumn Header="Источник" Binding="{Binding SourceDescription}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Карточка партии" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedBatch.BatchNumber}" FontSize="24" FontWeight="Bold" Margin="0,12,0,0" />
+                            <TextBlock Text="{Binding SelectedBatchStatusText, StringFormat=Статус: {0}}" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding SelectedBatch.VolumeLiters, StringFormat=Объем: {0:N1} л}" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding SelectedBatch.RemainingLiters, StringFormat=Остаток: {0:N1} л}" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding SelectedBatch.ExpirationDate, StringFormat=Срок годности: {0:dd.MM.yyyy HH:mm}}" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding SelectedBatch.SourceDescription, StringFormat=Источник: {0}}" TextWrapping="Wrap" Margin="0,8,0,12" />
+                            <TextBlock Text="История операций" FontWeight="SemiBold" Margin="0,10,0,0" />
+                            <DataGrid ItemsSource="{Binding SelectedBatchMovementHistory}" IsReadOnly="True" MaxHeight="260">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate, StringFormat=dd.MM HH:mm}" Width="90" />
+                                    <DataGridTextColumn Header="Операция" Binding="{Binding OperationType, Converter={StaticResource EnumTextConverter}}" Width="120" />
+                                    <DataGridTextColumn Header="Объем" Binding="{Binding VolumeLiters}" Width="70" />
+                                    <DataGridTextColumn Header="Основание" Binding="{Binding Reason}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Качество">
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="380" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Лабораторный контроль" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedBatch.BatchNumber, StringFormat=Выбрана партия: {0}}" Margin="0,12,0,10" />
+                            <TextBlock Text="Жирность, %" />
+                            <TextBox Text="{Binding QualityFat, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Белок, %" />
+                            <TextBox Text="{Binding QualityProtein, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Кислотность, °T" />
+                            <TextBox Text="{Binding QualityAcidity, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Плотность, кг/м³" />
+                            <TextBox Text="{Binding QualityDensity, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Температура, °C" />
+                            <TextBox Text="{Binding QualityTemperature, UpdateSourceTrigger=PropertyChanged}" />
+                            <CheckBox Content="Есть посторонние примеси" IsChecked="{Binding HasForeignImpurities}" Margin="0,8,0,8" />
+                            <Button Content="Сохранить результат анализа" Command="{Binding SaveQualityCommand}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Журнал лабораторного контроля" FontSize="18" FontWeight="SemiBold" />
+                            <DataGrid ItemsSource="{Binding QualityTests}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding TestDate, StringFormat=dd.MM.yyyy HH:mm}" Width="145" />
+                                    <DataGridTextColumn Header="Жир" Binding="{Binding FatPercent}" Width="70" />
+                                    <DataGridTextColumn Header="Белок" Binding="{Binding ProteinPercent}" Width="70" />
+                                    <DataGridTextColumn Header="Кислотность" Binding="{Binding Acidity}" Width="90" />
+                                    <DataGridTextColumn Header="Плотность" Binding="{Binding Density}" Width="90" />
+                                    <DataGridTextColumn Header="Температура" Binding="{Binding Temperature}" Width="95" />
+                                    <DataGridTextColumn Header="Заключение" Binding="{Binding Conclusion, Converter={StaticResource EnumTextConverter}}" Width="130" />
+                                    <DataGridTextColumn Header="Комментарий" Binding="{Binding Comment}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Склад">
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="360" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Операции склада" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedBatch.BatchNumber, StringFormat=Партия: {0}}" Margin="0,12,0,10" />
+                            <TextBlock Text="Целевая емкость" />
+                            <ComboBox ItemsSource="{Binding StorageTanks}" SelectedItem="{Binding TargetTank}" DisplayMemberPath="Name" />
+                            <TextBlock Text="Объем операции, л" />
+                            <TextBox Text="{Binding OperationVolume, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Content="Переместить" Command="{Binding TransferCommand}" />
+                            <Button Content="Списать" Command="{Binding WriteOffCommand}" Background="#8A3B3F" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Складская ведомость" FontSize="18" FontWeight="SemiBold" />
+                            <DataGrid ItemsSource="{Binding StockMovements}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate, StringFormat=dd.MM.yyyy HH:mm}" Width="145" />
+                                    <DataGridTextColumn Header="Операция" Binding="{Binding OperationType, Converter={StaticResource EnumTextConverter}}" Width="130" />
+                                    <DataGridTextColumn Header="Объем, л" Binding="{Binding VolumeLiters}" Width="90" />
+                                    <DataGridTextColumn Header="Ответственный" Binding="{Binding ResponsibleUser}" Width="140" />
+                                    <DataGridTextColumn Header="Основание" Binding="{Binding Reason}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Отгрузка">
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="380" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Оформление отгрузки" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedBatch.BatchNumber, StringFormat=Партия: {0}}" Margin="0,12,0,10" />
+                            <TextBlock Text="Покупатель" />
+                            <ComboBox ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer}" DisplayMemberPath="Name" />
+                            <TextBlock Text="Транспорт" />
+                            <ComboBox ItemsSource="{Binding Vehicles}" SelectedItem="{Binding SelectedVehicle}" DisplayMemberPath="Name" />
+                            <TextBlock Text="Объем отгрузки, л" />
+                            <TextBox Text="{Binding OperationVolume, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Температура при отгрузке, °C" />
+                            <TextBox Text="{Binding ShipmentTemperature, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Content="Сформировать накладную" Command="{Binding CreateShipmentCommand}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="Журнал отгрузок" FontSize="18" FontWeight="SemiBold" />
+                            <DataGrid ItemsSource="{Binding Shipments}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Номер" Binding="{Binding ShipmentNumber}" Width="130" />
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding ShippedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="145" />
+                                    <DataGridTextColumn Header="Температура" Binding="{Binding Temperature}" Width="100" />
+                                    <DataGridTextColumn Header="Документ" Binding="{Binding BasisDocument}" Width="190" />
+                                    <DataGridTextColumn Header="Ответственный" Binding="{Binding ResponsibleUser}" Width="160" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Отчеты">
+                <Grid Margin="0,14,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Border Style="{StaticResource Panel}">
+                        <WrapPanel>
+                            <Button Content="Обновить сводку" Command="{Binding GenerateReportCommand}" />
+                            <Button Content="Экспорт CSV" Command="{Binding ExportCsvCommand}" />
+                            <Button Content="Резервная копия" Command="{Binding BackupCommand}" />
+                        </WrapPanel>
+                    </Border>
+                    <Border Grid.Row="1" Style="{StaticResource Panel}">
+                        <TextBox Text="{Binding ReportText}" FontFamily="Consolas" FontSize="14" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Справочники">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,14,0,0">
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="Справочники хозяйства" FontSize="18" FontWeight="SemiBold" />
+                                <WrapPanel>
+                                    <Button Content="Добавить типовые записи" Command="{Binding AddDirectoryCommand}" />
+                                    <Button Content="Заполнить демо-данными" Command="{Binding FillDemoDataCommand}" Background="#6B5B2A" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <UniformGrid Columns="2">
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="Пользователи" FontWeight="SemiBold" />
+                                    <DataGrid ItemsSource="{Binding Users}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Логин" Binding="{Binding Login}" Width="110" />
+                                            <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="*" />
+                                            <DataGridTextColumn Header="Роль" Binding="{Binding Role, Converter={StaticResource EnumTextConverter}}" Width="130" IsReadOnly="True" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="Емкости хранения" FontWeight="SemiBold" />
+                                    <DataGrid ItemsSource="{Binding StorageTanks}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*" />
+                                            <DataGridTextColumn Header="Вместимость" Binding="{Binding CapacityLiters}" Width="110" />
+                                            <DataGridTextColumn Header="Место" Binding="{Binding Location}" Width="150" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="Животноводческие группы" FontWeight="SemiBold" />
+                                    <DataGrid ItemsSource="{Binding AnimalGroups}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*" />
+                                            <DataGridTextColumn Header="Место" Binding="{Binding Location}" Width="220" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="Покупатели и транспорт" FontWeight="SemiBold" />
+                                    <DataGrid ItemsSource="{Binding Customers}" MaxHeight="180">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Покупатель" Binding="{Binding Name}" Width="*" />
+                                            <DataGridTextColumn Header="ИНН" Binding="{Binding Inn}" Width="130" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <DataGrid ItemsSource="{Binding Vehicles}" MaxHeight="180">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Транспорт" Binding="{Binding Name}" Width="*" />
+                                            <DataGridTextColumn Header="Номер" Binding="{Binding PlateNumber}" Width="120" />
+                                            <DataGridTextColumn Header="Водитель" Binding="{Binding Driver}" Width="160" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Аудит">
+                <Border Style="{StaticResource Panel}" Margin="0,14,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Журнал действий пользователей" FontSize="18" FontWeight="SemiBold" />
+                        <DataGrid ItemsSource="{Binding AuditLog}" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Дата" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm:ss}" Width="160" />
+                                <DataGridTextColumn Header="Пользователь" Binding="{Binding UserName}" Width="140" />
+                                <DataGridTextColumn Header="Действие" Binding="{Binding Action}" Width="190" />
+                                <DataGridTextColumn Header="Детали" Binding="{Binding Details}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

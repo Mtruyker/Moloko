@@ -1,0 +1,4 @@
+{
+  "UsePostgreSql": true,
+  "ConnectionString": "Host=localhost;Port=5432;Database=moloko;Username=postgres;Password=284650"
+}

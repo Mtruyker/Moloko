@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Af8K+gyi8rI=",
+  "success": true,
+  "projectFilePath": "G:\\RiderProjects\\Moloko\\Moloko\\Moloko.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Professional\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Professional\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Professional\\.nuget\\packages\\npgsql\\8.0.6\\npgsql.8.0.6.nupkg.sha512"
+  ],
+  "logs": []
+}
